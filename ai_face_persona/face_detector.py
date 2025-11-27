@@ -3,7 +3,7 @@ face_detector.py
 MediaPipe Face Mesh based face detector + landmarks.
 Returns bounding box and list of landmarks in pixel coordinates.
 
-Build by Tuba khan
+Build by Shoarya
 """
 import cv2
 import mediapipe as mp

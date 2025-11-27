@@ -5,7 +5,7 @@ AI Face Emotion & Persona Overlay
 Real-time webcam app that combines MediaPipe face detection, a Hugging Face emotion
 text classifier (adapter), and a neon cyberpunk HUD overlay.
 
-Build by Tuba khan
+Build by Shoarya
 """
 import cv2
 import time

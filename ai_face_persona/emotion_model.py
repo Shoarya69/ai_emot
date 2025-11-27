@@ -6,7 +6,7 @@ classified by the text model to determine an emotion label + confidence.
 
 Includes persona mapping and smooth fade animation state manager.
 
-Build by Tuba khan
+Build by Shoarya
 """
 import time
 from typing import List, Tuple

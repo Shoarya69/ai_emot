@@ -3,7 +3,7 @@ overlay_utils.py
 Drawing utilities for neon cyberpunk HUD overlays: glow rounded rectangle, scanline,
 glitch text, FPS, and screenshot helpers.
 
-Build by Tuba khan
+Build by Shoarya
 """
 import cv2
 import numpy as np
