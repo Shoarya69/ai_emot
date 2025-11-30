@@ -17,27 +17,47 @@ NEON_BLUE = (160, 90, 255)   # deeper blue/purple for accents
 NEON_ACCENT = (180, 140, 255)
 
 
+EMOTION_COLOR = {
+    "happy": (0,255,0),     # green
+    "joy": (0,255,0),
+    "excited": (0,200,255), # yellowish
+    "surprise": (255,255,0),# cyan
+    "anger": (0,0,255),     # red
+    "sadness": (255,0,0),   # blue
+    "fear": (128,0,128),    # purple
+    "disgust": (0,128,0),   # dark green
+    "confused": (255,128,0),# orange
+    "neutral": (200,200,200)# gray
+}
+
+
 def draw_rounded_rect(img, rect, color, thickness=2, radius=20, glow=False):
     """Draw a rounded rectangle with optional glow.
 
     rect: (x,y,w,h)
     """
+    padding = 30
     x, y, w, h = rect
+    x -= padding
+    y -= padding
+    w += 2*padding
+    h += 2*padding
+
     overlay = img.copy()
     # Draw main rounded rectangle by drawing 4 lines and 4 circles
     x1, y1 = x, y
     x2, y2 = x + w, y + h
     # lines
-    cv2.line(overlay, (x1+radius, y1), (x2-radius, y1), color, thickness)
-    cv2.line(overlay, (x1+radius, y2), (x2-radius, y2), color, thickness)
-    cv2.line(overlay, (x1, y1+radius), (x1, y2-radius), color, thickness)
-    cv2.line(overlay, (x2, y1+radius), (x2, y2-radius), color, thickness)
-    # corners
-    cv2.ellipse(overlay, (x1+radius, y1+radius), (radius, radius), 180, 0, 90, color, thickness)
-    cv2.ellipse(overlay, (x2-radius, y1+radius), (radius, radius), 270, 0, 90, color, thickness)
-    cv2.ellipse(overlay, (x1+radius, y2-radius), (radius, radius), 90, 0, 90, color, thickness)
-    cv2.ellipse(overlay, (x2-radius, y2-radius), (radius, radius), 0, 0, 90, color, thickness)
-
+    # cv2.line(overlay, (x1+radius, y1), (x2-radius, y1), color, thickness)
+    # cv2.line(overlay, (x1+radius, y2), (x2-radius, y2), color, thickness)
+    # cv2.line(overlay, (x1, y1+radius), (x1, y2-radius), color, thickness)
+    # cv2.line(overlay, (x2, y1+radius), (x2, y2-radius), color, thickness)
+    # # corners
+    # cv2.ellipse(overlay, (x1+radius, y1+radius), (radius, radius), 180, 0, 90, color, thickness)
+    # cv2.ellipse(overlay, (x2-radius, y1+radius), (radius, radius), 270, 0, 90, color, thickness)
+    # cv2.ellipse(overlay, (x1+radius, y2-radius), (radius, radius), 90, 0, 90, color, thickness)
+    # cv2.ellipse(overlay, (x2-radius, y2-radius), (radius, radius), 0, 0, 90, color, thickness)
+    cv2.rectangle(overlay, (x, y), (x2, y2), color, thickness=3, lineType=cv2.LINE_AA,borderRadius=20)
     if glow:
         # create glow by adding blurred layers with cyan/tint
         mask = np.zeros_like(img)
@@ -80,7 +100,7 @@ def draw_emotion_label(img, label: str, conf: float, persona: str, bbox: Tuple[i
     # draw shadow
     cv2.putText(img, text, (px+2+offset[0], py+2), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (10,10,10), 3, cv2.LINE_AA)
     # main neon
-    color = NEON_CYAN if alpha>0.5 else NEON_BLUE
+    color = EMOTION_COLOR.get(label.lower(), (255,255,255))
     cv2.putText(img, text, (px+offset[0], py), cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2, cv2.LINE_AA)
     # persona below
     persona_pos = (px, py + 22)
@@ -140,3 +160,4 @@ if __name__ == "__main__":
             break
     cap.release()
     cv2.destroyAllWindows()
+

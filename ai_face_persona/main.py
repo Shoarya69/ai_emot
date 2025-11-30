@@ -12,7 +12,7 @@ import time
 import os
 import numpy as np
 # import winsound
-
+import ai_face_persona.esp32_module as esp32_module
 from ai_face_persona.face_detector import FaceDetector
 from ai_face_persona.emotion_model import EmotionModel
 import ai_face_persona.overlay_utils as ou
@@ -101,12 +101,13 @@ def main():
                         label, conf, persona, alpha = emotion.predict(lms, (h, w))
             elif lms:
                 label, conf, persona, alpha = emotion.predict(lms, (h, w))
+            print(esp32_module.connector(label,conf))
 
             # overlay drawing
             if display_bbox:
                 x,y,ww,hh = display_bbox
                 # draw glow rounded rect (use cyan accent) using smoothed bbox
-                frame = ou.draw_rounded_rect(frame, display_bbox, ou.NEON_CYAN, thickness=2, radius=22, glow=True)
+                frame = ou.draw_rounded_rect(frame, display_bbox, ou.EMOTION_COLOR.get(label.lower(), (255,255,255)), thickness=2, radius=22, glow=False)
                 # draw emotion label with fade alpha using smoothed bbox
                 ou.draw_emotion_label(frame, label, conf, persona, display_bbox, alpha)
 
