@@ -12,6 +12,8 @@ import time
 import os
 import numpy as np
 # import winsound
+import serial
+import time
 import ai_face_persona.esp32_module as esp32_module
 from ai_face_persona.face_detector import FaceDetector
 from ai_face_persona.emotion_model import EmotionModel
@@ -65,7 +67,13 @@ def main():
         use_dl = False
         # DL backend: 'deepface' or 'onnx'
         dl_backend = emotion.dl_backend
-
+        try:
+            ser = serial.Serial('/dev/ttyACM0', 115200)
+            time.sleep(2)
+            frame_counter = 0
+        except Exception as e:
+            print(e)
+            exit()
         while True:
             ok, frame = cap.read()
             if not ok:
@@ -101,8 +109,14 @@ def main():
                         label, conf, persona, alpha = emotion.predict(lms, (h, w))
             elif lms:
                 label, conf, persona, alpha = emotion.predict(lms, (h, w))
-            print(esp32_module.connector(label,conf))
-
+            
+            frame_counter += 1
+            if frame_counter >= 30:   # har 10 frames ke baad hi update
+                value = esp32_module.connector(label, conf)
+                ser.write((str(value) + "\n").encode())
+                print("Sent:", value)
+                last_value_sent = value
+                frame_counter = 0  # reset counter
             # overlay drawing
             if display_bbox:
                 x,y,ww,hh = display_bbox

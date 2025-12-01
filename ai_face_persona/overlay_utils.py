@@ -57,7 +57,7 @@ def draw_rounded_rect(img, rect, color, thickness=2, radius=20, glow=False):
     # cv2.ellipse(overlay, (x2-radius, y1+radius), (radius, radius), 270, 0, 90, color, thickness)
     # cv2.ellipse(overlay, (x1+radius, y2-radius), (radius, radius), 90, 0, 90, color, thickness)
     # cv2.ellipse(overlay, (x2-radius, y2-radius), (radius, radius), 0, 0, 90, color, thickness)
-    cv2.rectangle(overlay, (x, y), (x2, y2), color, thickness=3, lineType=cv2.LINE_AA,borderRadius=20)
+    cv2.rectangle(overlay, (x, y), (x2, y2), color, thickness=3, lineType=cv2.LINE_AA)
     if glow:
         # create glow by adding blurred layers with cyan/tint
         mask = np.zeros_like(img)
