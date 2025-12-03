@@ -48,7 +48,7 @@ class EmotionModel:
         'neutral': 'Calm Sentinel'
     }
 
-    def __init__(self, model_name: str = "joeddav/distilbert-base-uncased-go-emotions", mode: str = "image"):
+    def __init__(self, model_name: str = "/home/shoarya/Desktop/ai_emotion/AI-Face-Emotion-Persona/models/emotion_student", mode: str = "image"):
         """Create EmotionModel.
 
         Parameters
@@ -57,6 +57,9 @@ class EmotionModel:
                 heuristic classifier, or 'hybrid' to prefer image heuristics and fallback
                 to text when available.
         """
+
+        
+        # model_name = "joeddav/distilbert-base-uncased-go-emotions"
         self.model_name = model_name
         self.mode = mode
         self.classifier = None

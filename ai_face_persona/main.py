@@ -14,12 +14,13 @@ import numpy as np
 # import winsound
 import serial
 import time
-import ai_face_persona.esp32_module as esp32_module
+# import ai_face_persona.esp32_module as esp32_module
 from ai_face_persona.face_detector import FaceDetector
 from ai_face_persona.emotion_model import EmotionModel
 import ai_face_persona.overlay_utils as ou
 from ai_face_persona.cam import ip
-
+import ai_face_persona.confi as cn 
+from ai_face_persona.self_api import delete_lines_after_delay #delete_i
 def play_shutter_sound():
     """Play a short futuristic sound on Windows using winsound.Beep.
     This is lightweight and avoids additional audio dependencies.
@@ -30,6 +31,7 @@ def play_shutter_sound():
     #     winsound.Beep(1400, 60)
     # except Exception:
     #     pass
+
 
 
 def main():
@@ -67,13 +69,17 @@ def main():
         use_dl = False
         # DL backend: 'deepface' or 'onnx'
         dl_backend = emotion.dl_backend
+        esp32 = False
         try:
             ser = serial.Serial('/dev/ttyACM0', 115200)
             time.sleep(2)
             frame_counter = 0
         except Exception as e:
             print(e)
-            exit()
+            esp32 = False
+        frame_counter = 0
+        a = 0
+        msg = "-1"
         while True:
             ok, frame = cap.read()
             if not ok:
@@ -82,6 +88,21 @@ def main():
             h, w = frame.shape[:2]
             bbox, lms = detector.detect(frame)
 
+            if a == 30:#delete_i
+                with open("/home/shoarya/Desktop/ai_emotion/AI-Face-Emotion-Persona/ai_face_persona/messages.txt", "r") as f: #delete_i
+                    line = f.readlines()#delete_i
+                if line:#delete_i
+                    line[0] = line[0].strip()#delete_i
+                    file_time = float(line[0])#delete_i
+                    current_time = time.time()#delete_i
+
+                    if current_time - file_time > 3:#delete_i
+                        msg = "-1"#delete_i
+                    else:#delete_i
+                        msg = line[1]#delete_i
+                    
+                a = 0#delete_i
+            a = a+1
             # smooth bbox movement for HUD (interpolate previous displayed bbox)
             if bbox:
                 if display_bbox is None:
@@ -98,6 +119,7 @@ def main():
             else:
                 display_bbox = None
 
+
             label, conf, persona, alpha = ('neutral', 0.0, 'Calm Sentinel', 1.0)
             if bbox and emotion and use_dl:
                 # if DL requested, try using DL predictor directly (requires DeepFace or ONNX)
@@ -111,7 +133,7 @@ def main():
                 label, conf, persona, alpha = emotion.predict(lms, (h, w))
             
             frame_counter += 1
-            if frame_counter >= 30:   # har 10 frames ke baad hi update
+            if frame_counter >= 30 and esp32 :   # har 10 frames ke baad hi update
                 value = esp32_module.connector(label, conf)
                 ser.write((str(value) + "\n").encode())
                 print("Sent:", value)
@@ -123,7 +145,13 @@ def main():
                 # draw glow rounded rect (use cyan accent) using smoothed bbox
                 frame = ou.draw_rounded_rect(frame, display_bbox, ou.EMOTION_COLOR.get(label.lower(), (255,255,255)), thickness=2, radius=22, glow=False)
                 # draw emotion label with fade alpha using smoothed bbox
-                ou.draw_emotion_label(frame, label, conf, persona, display_bbox, alpha)
+                abc = label
+                if msg != "-1": #delete_i
+                    abc = msg #delete_i
+                if msg == "0": #delete_i
+                    cn.value = 1  #delete_i
+                    delete_lines_after_delay(__file__)#delete_i
+                ou.draw_emotion_label(frame, abc, conf, persona, display_bbox, alpha)
 
             # animated scanline
             scan_y = (scan_y + int( (time.time()-last_time) * 180 )) % h
