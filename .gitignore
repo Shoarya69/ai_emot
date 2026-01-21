@@ -1,4 +1,4 @@
 *.txt
 !requirements.txt
 tf_env
-models
+modelstf_env/
